@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>⊨▣▣⊙|ε∿ / ⊏⊳∪⊨|∨ε — CH-VI-26</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Bebas+Neue&family=IBM+Plex+Sans:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:    #060605;
+      --deep:     #0A0908;
+      --surface:  #111009;
+      --border:   #222018;
+      --muted:    #3A3830;
+      --mid:      #6A6660;
+      --light:    #A8A29A;
+      --off-white:#E5DFD5;
+      --white:    #F2EDE6;
+      --cipher:   #BFA882;
+      --cold:     #8AAABB;   /* icy blue accent for winter */
+      --glow-c:   rgba(138,170,187,0.07);
+      --glow-w:   rgba(191,168,130,0.06);
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'IBM Plex Mono', monospace;
+      background: var(--black);
+      color: var(--off-white);
+      overflow: hidden;
+      cursor: crosshair;
+    }
+
+    /* allow scroll on short/small screens */
+    @media (max-height: 700px), (max-width: 480px) {
+      html, body { overflow: auto; height: auto; }
+      .page { height: auto; min-height: 100vh; }
+    }
+
+    /* ── GRAIN ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 999; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+      opacity: 0.4;
+    }
+
+    /* ── COLD MIST BG ── */
+    .bg-mist {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 50% at 15% 20%, rgba(138,170,187,0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 60% at 85% 80%, rgba(138,170,187,0.04) 0%, transparent 65%),
+        radial-gradient(ellipse 40% 30% at 50% 50%, rgba(191,168,130,0.03) 0%, transparent 60%);
+    }
+
+    /* ── FLOATING GLYPHS BG ── */
+    .bg-glyphs {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      overflow: hidden;
+    }
+    .bg-glyph {
+      position: absolute;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--cipher);
+      opacity: 0;
+      animation: floatGlyph linear infinite;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .page {
+      position: relative; z-index: 1;
+      height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding: 2rem 3rem;
+    }
+
+    /* ── TOP BAR ── */
+    .top-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      animation: fadeDown 0.7s ease both;
+    }
+    .top-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.22em;
+      color: var(--mid);
+    }
+    .top-status {
+      display: flex; align-items: center; gap: 0.6rem;
+      font-size: 0.58rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .status-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--cold);
+      box-shadow: 0 0 8px var(--cold);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    .top-chapter {
+      font-size: 0.58rem;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+    }
+
+    /* ── CENTER ── */
+    .center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 0;
+    }
+
+    /* cipher title — revealed character by character */
+    .cipher-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1rem, 2.2vw, 1.8rem);
+      letter-spacing: 0.28em;
+      color: var(--cipher);
+      margin-bottom: 1rem;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.4s ease both;
+      min-height: 2rem;
+    }
+
+    .main-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4.5rem, 13vw, 13rem);
+      line-height: 0.85;
+      letter-spacing: 0.03em;
+      color: var(--white);
+      opacity: 0;
+      animation: fadeUp 0.8s 0.6s ease both;
+      position: relative;
+    }
+    .main-title .word-cold {
+      display: block;
+      color: var(--cold);
+      text-shadow: 0 0 60px rgba(138,170,187,0.2);
+    }
+
+    .sub-line {
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 1.8rem;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.9s ease both;
+    }
+    .sub-line em { color: var(--cipher); font-style: normal; }
+
+    /* ── COUNTDOWN ── */
+    .countdown-wrap {
+      margin-top: 3.5rem;
+      opacity: 0;
+      animation: fadeUp 0.7s 1.1s ease both;
+    }
+    .countdown {
+      display: flex; align-items: flex-start; gap: 0;
+    }
+    .count-unit {
+      display: flex; flex-direction: column; align-items: center;
+      min-width: 120px;
+    }
+    .count-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.5rem, 7vw, 7rem);
+      line-height: 1;
+      color: var(--white);
+      letter-spacing: 0.02em;
+      position: relative;
+      transition: color 0.15s;
+    }
+    .count-num.tick { color: var(--cold); }
+    .count-label {
+      font-size: 0.52rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 0.4rem;
+    }
+    .count-sep {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 6vw, 6rem);
+      color: var(--border);
+      line-height: 1;
+      padding: 0 0.3rem;
+      margin-top: 0.1rem;
+      animation: blink 2s step-end infinite;
+    }
+
+    /* ── PIECES PREVIEW ── */
+    .pieces-wrap {
+      margin-top: 3rem;
+      opacity: 0;
+      animation: fadeUp 0.6s 1.3s ease both;
+      display: flex; align-items: center; gap: 2rem;
+      justify-content: center;
+    }
+    .piece-tag {
+      display: flex; align-items: center; gap: 0.7rem;
+      border: 1px solid var(--border);
+      padding: 0.55rem 1.1rem;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .piece-tag:hover { border-color: var(--cipher); background: var(--glow-w); }
+    .piece-icon { font-size: 0.7rem; color: var(--cold); }
+    .piece-name { font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--light); }
+    .piece-cipher { font-size: 0.5rem; color: var(--muted); letter-spacing: 0.06em; }
+
+    /* ── NOTIFY FORM ── */
+    .notify-wrap {
+      margin-top: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s 1.5s ease both;
+      display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+    }
+    .notify-label {
+      font-size: 0.55rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .notify-form {
+      display: flex; gap: 0;
+    }
+    .notify-input {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-right: none;
+      color: var(--off-white);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      padding: 0.75rem 1.2rem;
+      outline: none;
+      width: 260px;
+      letter-spacing: 0.04em;
+      transition: border-color 0.2s;
+    }
+    .notify-input::placeholder { color: var(--muted); }
+    .notify-input:focus { border-color: var(--cipher); }
+    .notify-btn {
+      background: var(--cipher);
+      border: 1px solid var(--cipher);
+      color: var(--black);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 0.75rem 1.4rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .notify-btn:hover { background: var(--cold); border-color: var(--cold); }
+    .notify-success {
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      color: var(--cold);
+      display: none;
+    }
+
+    /* ── BOTTOM BAR ── */
+    .bottom-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      animation: fadeUp 0.6s 1.7s ease both;
+      opacity: 0;
+    }
+    .bottom-meta {
+      font-size: 0.55rem;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      line-height: 1.9;
+    }
+    .bottom-meta span { color: var(--cipher); }
+    .bottom-codes {
+      font-size: 0.55rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-align: right;
+      line-height: 1.9;
+    }
+    .bottom-codes span { color: var(--cold); }
+    .bottom-link {
+      font-size: 0.58rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .bottom-link:hover { color: var(--cipher); border-color: var(--cipher); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeDown { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:none; } }
+    @keyframes fadeUp   { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+    @keyframes pulse    { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.85)} }
+    @keyframes blink    { 0%,100%{opacity:0.3} 50%{opacity:0.08} }
+    @keyframes floatGlyph {
+      0%   { opacity:0; transform: translateY(0) translateX(0); }
+      8%   { opacity:1; }
+      92%  { opacity:1; }
+      100% { opacity:0; transform: translateY(-100vh) translateX(var(--drift)); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      .page { padding: 1.2rem 1.2rem 2rem; }
+      .top-bar { flex-wrap: wrap; gap: 0.5rem; }
+      .top-chapter { width: 100%; text-align: center; }
+      .main-title { font-size: clamp(3rem, 18vw, 5rem); }
+      .cipher-title { font-size: clamp(0.7rem, 3.5vw, 1rem); }
+      .sub-line { font-size: 0.58rem; letter-spacing: 0.1em; }
+      .count-unit { min-width: 58px; }
+      .count-num { font-size: clamp(2.2rem, 12vw, 3.5rem); }
+      .count-sep { font-size: clamp(2rem, 10vw, 3rem); }
+      .count-label { font-size: 0.45rem; }
+      .countdown-wrap { margin-top: 1.8rem; }
+      .pieces-wrap { flex-wrap: wrap; gap: 0.6rem; margin-top: 1.5rem; }
+      .piece-tag { padding: 0.45rem 0.8rem; }
+      .notify-wrap { margin-top: 1.5rem; }
+      .notify-form { flex-direction: column; width: 100%; max-width: 300px; }
+      .notify-input { width: 100%; border-right: 1px solid var(--border); border-bottom: none; }
+      .notify-btn { width: 100%; text-align: center; }
+      .bottom-bar { flex-direction: column; gap: 0.8rem; text-align: center; padding-top: 1.2rem; margin-top: 1.5rem; }
+      .bottom-codes { text-align: center; }
+      .bottom-meta { text-align: center; }
+    }
+
+    @media (max-width: 380px) {
+      .count-unit { min-width: 46px; }
+      .count-num { font-size: 2rem; }
+      .count-sep { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-mist"></div>
+  <div class="bg-glyphs" id="bgGlyphs"></div>
+
+  <div class="page">
+
+    <!-- TOP -->
+    <div class="top-bar">
+      <div class="top-logo">Nostalgic Threads</div>
+      <div class="top-status">
+        <div class="status-dot"></div>
+        Archive Preparing
+      </div>
+      <div class="top-chapter">CH-VI-26 · S-I · OPEN ARCHIVE</div>
+    </div>
+
+    <!-- CENTER -->
+    <div class="center">
+
+      <div class="cipher-title" id="cipherTitle">
+        <!-- filled by JS -->
+      </div>
+
+      <h1 class="main-title">
+        <span class="word-cold">WINTER</span>
+        ARCHIVE
+      </h1>
+
+      <p class="sub-line">
+        CH-VI-26 &nbsp;·&nbsp; <em>Hoodies & Beanies</em> &nbsp;·&nbsp; S-I / Open Archive &nbsp;·&nbsp; All Under R950
+      </p>
+
+      <!-- COUNTDOWN -->
+      <div class="countdown-wrap">
+        <div class="countdown">
+          <div class="count-unit">
+            <div class="count-num" id="cd-days">00</div>
+            <div class="count-label">Days</div>
+          </div>
+          <div class="count-sep">:</div>
+          <div class="count-unit">
+            <div class="count-num" id="cd-hours">00</div>
+            <div class="count-label">Hours</div>
+          </div>
+          <div class="count-sep">:</div>
+          <div class="count-unit">
+            <div class="count-num" id="cd-mins">00</div>
+            <div class="count-label">Minutes</div>
+          </div>
+          <div class="count-sep">:</div>
+          <div class="count-unit">
+            <div class="count-num" id="cd-secs">00</div>
+            <div class="count-label">Seconds</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PIECES -->
+      <div class="pieces-wrap">
+        <div class="piece-tag">
+          <span class="piece-icon">◈</span>
+          <div>
+            <div class="piece-name">Hoodies</div>
+            <div class="piece-cipher">⊨▣▣⊙|ε∿</div>
+          </div>
+        </div>
+        <div class="piece-tag">
+          <span class="piece-icon">◈</span>
+          <div>
+            <div class="piece-name">Beanies</div>
+            <div class="piece-cipher">⊓ε⊏⋂|ε∿</div>
+          </div>
+        </div>
+        <div class="piece-tag">
+          <span class="piece-icon">◈</span>
+          <div>
+            <div class="piece-name">All Under $50</div>
+            <div class="piece-cipher">Q1-S · Q2-S</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOTIFY -->
+      <div class="notify-wrap">
+        <p class="notify-label">Register for access when the archive opens</p>
+        <div class="notify-form">
+          <input class="notify-input" id="notifyEmail" type="email" placeholder="your@email.com" />
+          <button class="notify-btn" onclick="handleNotify()">Notify Me</button>
+        </div>
+        <p class="notify-success" id="notifySuccess">✦ &nbsp; Record noted. You'll hear from the archive.</p>
+      </div>
+
+    </div>
+
+    <!-- BOTTOM -->
+    <div class="bottom-bar">
+      <div class="bottom-meta">
+        SEAL: <span>S-I</span> · OPEN ARCHIVE<br>
+        CHAPTER: <span>CH-VI-26</span> · JUNE 2026<br>
+        TRACKING: <span>GTB</span>
+      </div>
+      <a href="nostalgic-threads.html" class="bottom-link">← Back to Archive</a>
+      <div class="bottom-codes">
+        T•26.06.01 / D-00:00<br>
+        PIECES: <span>Hoodies · Beanies</span><br>
+        FIT: <span>F-S-3 · F-C-2</span>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ── CIPHER MAP — safe Unicode only ──
+    const glyphMap = {
+      'A':'⊏⌐','B':'⊓_','C':'⌒','D':'⊙','E':'ε','F':'⊢','G':'⊕','H':'⊨','I':'|',
+      'J':'↵','K':'⋉','L':'⌊','M':'⋀','N':'⋂','O':'▣','P':'⊥','Q':'◩','R':'⊳',
+      'S':'∿','T':'⊤','U':'∪','V':'∨','W':'∿∿','X':'⋇','Y':'⋎','Z':'⊳⊲',
+      ' ':' ','·':'·','-':'-'
+    };
+    function encode(text) {
+      return text.toUpperCase().split('').map(c => glyphMap[c] || c).join('');
+    }
+
+    // ── CIPHER TITLE — type-on effect ──
+    const titleText = encode('WINTER ARCHIVE');
+    const titleEl = document.getElementById('cipherTitle');
+    let ti = 0;
+    function typeTitle() {
+      if (ti <= titleText.length) {
+        titleEl.textContent = titleText.slice(0, ti) + (ti < titleText.length ? '_' : '');
+        ti++;
+        setTimeout(typeTitle, 55);
+      }
+    }
+    setTimeout(typeTitle, 900);
+
+    // ── COUNTDOWN — target: June 1 2026 00:00 local ──
+    const target = new Date('2026-06-01T00:00:00');
+    const units = {
+      days:  document.getElementById('cd-days'),
+      hours: document.getElementById('cd-hours'),
+      mins:  document.getElementById('cd-mins'),
+      secs:  document.getElementById('cd-secs'),
+    };
+    function pad(n) { return String(n).padStart(2, '0'); }
+    function setUnit(el, val) {
+      const s = pad(val);
+      if (el.textContent !== s) {
+        el.textContent = s;
+        el.classList.add('tick');
+        setTimeout(() => el.classList.remove('tick'), 200);
+      }
+    }
+    function tick() {
+      const diff = target - Date.now();
+      if (diff <= 0) {
+        Object.values(units).forEach(el => el.textContent = '00');
+        return;
+      }
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      setUnit(units.days, d);
+      setUnit(units.hours, h);
+      setUnit(units.mins, m);
+      setUnit(units.secs, s);
+    }
+    tick(); setInterval(tick, 1000);
+
+    // ── FLOATING GLYPHS ──
+    const glyphChars = Object.values(glyphMap).concat([
+      '⊏','⌐','⊓','⌒','⊙','ε','⊢','⊕','⊨','|','↵','⋉','⌊','⋀','⋂','▣','⊥','◩','⊳','∿','⊤','∪','∨','⋇','⋎','◈','◉','◌'
+    ]);
+    const bgGlyphs = document.getElementById('bgGlyphs');
+    for (let i = 0; i < 38; i++) {
+      const el = document.createElement('span');
+      el.className = 'bg-glyph';
+      const x = Math.random() * 100;
+      const dur = 18 + Math.random() * 28;
+      const delay = Math.random() * 20;
+      const drift = (Math.random() - 0.5) * 120;
+      el.style.cssText = `
+        left: ${x}vw;
+        bottom: -2rem;
+        --drift: ${drift}px;
+        animation-duration: ${dur}s;
+        animation-delay: -${delay}s;
+        opacity: ${0.02 + Math.random() * 0.06};
+      `;
+      el.textContent = glyphChars[Math.floor(Math.random() * glyphChars.length)];
+      bgGlyphs.appendChild(el);
+    }
+
+    // ── NOTIFY — submits to Formspree ──
+    async function handleNotify() {
+      const input = document.getElementById('notifyEmail');
+      const success = document.getElementById('notifySuccess');
+      const btn = document.querySelector('.notify-btn');
+      if (!input.value || !input.value.includes('@')) {
+        input.style.borderColor = '#884444';
+        setTimeout(() => input.style.borderColor = '', 800);
+        return;
+      }
+      btn.textContent = 'Recording...';
+      btn.disabled = true;
+      try {
+        await fetch('https://formspree.io/f/xbdzgenk', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ email: input.value, source: 'CH-VI-26 Winter Countdown' })
+        });
+      } catch(e) { /* fail silently — still show success */ }
+      input.style.display = 'none';
+      btn.style.display = 'none';
+      success.style.display = 'block';
+    }
+
+    // ── ENTER key for notify ──
+    document.getElementById('notifyEmail').addEventListener('keydown', e => {
+      if (e.key === 'Enter') handleNotify();
+    });
+  </script>
+</body>
+</html>

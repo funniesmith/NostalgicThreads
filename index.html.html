@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NOSTALGIC THREADS — Archive of the Streets</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Bebas+Neue&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #080807;
+      --deep: #0E0D0B;
+      --surface: #141310;
+      --lift: #1C1A17;
+      --border: #2A2824;
+      --muted: #4A4740;
+      --mid: #7A7670;
+      --light: #B0AA9F;
+      --off-white: #E8E2D8;
+      --white: #F5F1EB;
+      --cipher: #C8B89A;
+      --glow: rgba(200,184,154,0.08);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'IBM Plex Sans', sans-serif;
+      background: var(--black);
+      color: var(--off-white);
+      overflow-x: hidden;
+      cursor: crosshair;
+    }
+
+    /* grain overlay */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 999;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.35;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 3rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(8,8,7,0.9);
+      backdrop-filter: blur(12px);
+      animation: fadeDown 0.6s ease both;
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.22em;
+      color: var(--white);
+    }
+    .nav-logo span {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--cipher);
+      letter-spacing: 0.08em;
+      display: block;
+      margin-top: -2px;
+    }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--cipher); }
+    .nav-access {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--cipher);
+      border: 1px solid var(--border);
+      padding: 0.5rem 1.2rem;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .nav-access:hover { background: var(--glow); border-color: var(--cipher); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 0 3rem 4rem;
+      padding-top: 72px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg-cipher {
+      position: absolute; inset: 0;
+      display: flex; flex-wrap: wrap; align-content: flex-start;
+      padding: 6rem 2rem 2rem;
+      gap: 0;
+      opacity: 0.04;
+      pointer-events: none;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      line-height: 1.8;
+      letter-spacing: 0.08em;
+      color: var(--cipher);
+      overflow: hidden;
+    }
+
+    .hero-timestamp {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 2rem;
+      animation: fadeUp 0.8s 0.2s ease both;
+    }
+    .hero-timestamp .live { color: var(--cipher); }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(5rem, 14vw, 14rem);
+      line-height: 0.88;
+      letter-spacing: 0.02em;
+      color: var(--white);
+      animation: fadeUp 0.8s 0.3s ease both;
+      position: relative;
+      cursor: crosshair;
+      display: inline-block;
+    }
+    .hero-title .cipher-overlay {
+      position: absolute; top: 0; left: 0;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: clamp(1.2rem, 3vw, 3.2rem);
+      color: var(--cipher);
+      opacity: 0;
+      letter-spacing: 0.04em;
+      line-height: 0.88;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .real-text {
+      display: block;
+      transition: opacity 0.4s ease;
+    }
+    .hero-title:hover .cipher-overlay { opacity: 1; }
+    .hero-title:hover .real-text { opacity: 0; }
+
+    .hero-bottom {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      margin-top: 2.5rem;
+      animation: fadeUp 0.8s 0.5s ease both;
+    }
+    .hero-desc {
+      max-width: 420px;
+      font-size: 0.88rem;
+      line-height: 1.9;
+      color: var(--mid);
+      font-weight: 300;
+    }
+    .hero-desc em { color: var(--cipher); font-style: normal; }
+    .hero-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 1rem; }
+    .btn-primary {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--black);
+      background: var(--off-white);
+      padding: 0.9rem 2rem;
+      display: inline-block;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { background: var(--cipher); transform: translateY(-1px); }
+    .hero-code {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-align: right;
+      line-height: 1.7;
+    }
+
+    .hero-divider {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 1px; background: var(--border);
+    }
+
+    /* ── SECTION BASE ── */
+    section { padding: 6rem 3rem; }
+    .mono-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--cipher);
+      margin-bottom: 1.2rem;
+      display: flex; align-items: center; gap: 0.8rem;
+    }
+    .mono-tag::before { content: '//'; opacity: 0.4; }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.8rem, 5vw, 5rem);
+      letter-spacing: 0.04em;
+      line-height: 0.9;
+      color: var(--white);
+      margin-bottom: 1.2rem;
+    }
+    .section-sub {
+      font-size: 0.88rem;
+      line-height: 1.9;
+      color: var(--mid);
+      max-width: 460px;
+      font-weight: 300;
+    }
+
+    /* ── MARQUEE ── */
+    .marquee-wrap {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 0.8rem 0;
+      overflow: hidden;
+      background: var(--deep);
+    }
+    .marquee-track {
+      display: flex;
+      animation: marquee 28s linear infinite;
+      white-space: nowrap;
+    }
+    .marquee-item {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0 2.5rem;
+      display: flex; align-items: center; gap: 2.5rem;
+      flex-shrink: 0;
+    }
+    .marquee-item::after { content: '◆'; font-size: 0.35rem; color: var(--cipher); }
+    .marquee-item.cipher-mode { color: var(--cipher); opacity: 0.5; }
+
+    /* ── MANIFESTO ── */
+    #manifesto {
+      background: var(--deep);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .manifesto-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+    .manifesto-left { }
+    .manifesto-quote {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.2rem, 4vw, 4rem);
+      line-height: 0.95;
+      letter-spacing: 0.03em;
+      color: var(--white);
+      margin-bottom: 2rem;
+    }
+    .manifesto-quote em { color: var(--cipher); font-style: normal; }
+    .manifesto-body {
+      font-size: 0.85rem;
+      line-height: 2;
+      color: var(--mid);
+      font-weight: 300;
+    }
+    .manifesto-right {
+      display: flex; flex-direction: column; gap: 0;
+      border-left: 1px solid var(--border);
+      padding-left: 4rem;
+    }
+    .pillar {
+      padding: 1.8rem 0;
+      border-bottom: 1px solid var(--border);
+      opacity: 0;
+      transform: translateX(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .pillar.visible { opacity: 1; transform: translateX(0); }
+    .pillar:nth-child(2) { transition-delay: 0.1s; }
+    .pillar:nth-child(3) { transition-delay: 0.2s; }
+    .pillar:nth-child(4) { transition-delay: 0.3s; }
+    .pillar-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.55rem;
+      color: var(--cipher);
+      letter-spacing: 0.2em;
+      margin-bottom: 0.5rem;
+    }
+    .pillar-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      letter-spacing: 0.1em;
+      color: var(--white);
+      margin-bottom: 0.4rem;
+    }
+    .pillar-desc {
+      font-size: 0.8rem;
+      color: var(--mid);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    /* ── ARCHIVE (PRICING) ── */
+    #archive { background: var(--black); }
+    .archive-header {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      margin-bottom: 3rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .archive-legend {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--muted);
+      line-height: 2;
+      letter-spacing: 0.08em;
+      text-align: right;
+    }
+    .archive-legend span { color: var(--cipher); }
+    .archive-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .archive-table thead tr {
+      border-bottom: 1px solid var(--border);
+    }
+    .archive-table th {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0 1.5rem 1rem 0;
+      text-align: left;
+      font-weight: 400;
+    }
+    .archive-table tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.2s;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.4s ease, transform 0.4s ease, background 0.2s;
+    }
+    .archive-table tbody tr.visible { opacity: 1; transform: translateY(0); }
+    .archive-table tbody tr:nth-child(2) { transition-delay: 0.06s; }
+    .archive-table tbody tr:nth-child(3) { transition-delay: 0.12s; }
+    .archive-table tbody tr:nth-child(4) { transition-delay: 0.18s; }
+    .archive-table tbody tr:hover { background: var(--glow); }
+    .archive-table td {
+      padding: 1.5rem 1.5rem 1.5rem 0;
+      vertical-align: middle;
+    }
+    .record-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 0.08em;
+      color: var(--white);
+      display: block;
+    }
+    .record-cipher {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      color: var(--cipher);
+      letter-spacing: 0.06em;
+      margin-top: 2px;
+      display: block;
+    }
+    .record-code {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--mid);
+      letter-spacing: 0.1em;
+      line-height: 1.7;
+    }
+    .record-code .highlight { color: var(--cipher); }
+    .seal-badge {
+      display: inline-block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.12em;
+      padding: 0.3rem 0.7rem;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .seal-badge.s1 { border-color: var(--border); color: var(--mid); }
+    .seal-badge.s2 { border-color: #5A4A3A; color: #C8A060; }
+    .seal-badge.s3 { border-color: #7A3030; color: #E07070; }
+    .record-price {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 1.1rem;
+      color: var(--white);
+      font-weight: 500;
+    }
+    .record-access {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--cipher);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2px;
+      transition: border-color 0.2s;
+    }
+    .record-access:hover { border-color: var(--cipher); }
+
+    /* ── TESTIMONIALS ── */
+    #records { background: var(--deep); border-top: 1px solid var(--border); }
+    .records-header {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 6rem;
+      align-items: end;
+      margin-bottom: 3rem;
+      padding-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .records-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+    .record-card {
+      background: var(--deep);
+      padding: 2.2rem;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .record-card.visible { opacity: 1; transform: translateY(0); }
+    .record-card:nth-child(2) { transition-delay: 0.1s; }
+    .record-card:nth-child(3) { transition-delay: 0.2s; }
+    .record-meta {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.55rem;
+      color: var(--muted);
+      letter-spacing: 0.14em;
+      margin-bottom: 1.2rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .record-meta .verified { color: var(--cipher); }
+    .record-text {
+      font-size: 0.9rem;
+      line-height: 1.85;
+      color: var(--light);
+      font-weight: 300;
+      margin-bottom: 1.5rem;
+      font-style: italic;
+    }
+    .record-author {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .record-author .name { color: var(--off-white); }
+
+    /* ── COMMUNITY CODE ── */
+    #community { background: var(--surface); border-top: 1px solid var(--border); }
+    .community-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+    }
+    .code-list {
+      display: flex; flex-direction: column; gap: 0;
+      margin-top: 1rem;
+    }
+    .code-item {
+      display: flex; align-items: flex-start; gap: 1.5rem;
+      padding: 1.2rem 0;
+      border-bottom: 1px solid var(--border);
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .code-item.visible { opacity: 1; transform: translateY(0); }
+    .code-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.55rem;
+      color: var(--cipher);
+      letter-spacing: 0.1em;
+      min-width: 28px;
+      margin-top: 3px;
+    }
+    .code-text {
+      font-size: 0.88rem;
+      line-height: 1.7;
+      color: var(--light);
+      font-weight: 300;
+    }
+    .cipher-decoder {
+      background: var(--black);
+      border: 1px solid var(--border);
+      padding: 2rem;
+    }
+    .decoder-title {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--cipher);
+      margin-bottom: 1.5rem;
+      display: flex; align-items: center; gap: 0.6rem;
+    }
+    .decoder-title::before { content: '▶'; font-size: 0.4rem; }
+    .decoder-input-wrap { position: relative; margin-bottom: 1rem; }
+    .decoder-input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--off-white);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.82rem;
+      padding: 0.9rem 1rem;
+      outline: none;
+      letter-spacing: 0.06em;
+      transition: border-color 0.2s;
+    }
+    .decoder-input::placeholder { color: var(--muted); }
+    .decoder-input:focus { border-color: var(--cipher); }
+    .decoder-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+      display: block;
+    }
+    .decoder-output {
+      background: var(--deep);
+      border: 1px solid var(--border);
+      padding: 1rem;
+      min-height: 52px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 1rem;
+      color: var(--cipher);
+      letter-spacing: 0.08em;
+      word-break: break-all;
+      line-height: 1.6;
+    }
+    .decoder-hint {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.55rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      margin-top: 0.8rem;
+      line-height: 1.7;
+    }
+
+    /* ── FAQ ── */
+    #faq { background: var(--black); border-top: 1px solid var(--border); }
+    .faq-layout { display: grid; grid-template-columns: 1fr 1.8fr; gap: 6rem; align-items: start; }
+    .faq-list { display: flex; flex-direction: column; }
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-q {
+      width: 100%; background: none; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.4rem 0;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 400;
+      color: var(--light);
+      text-align: left;
+      gap: 1rem;
+      transition: color 0.2s;
+    }
+    .faq-q:hover { color: var(--off-white); }
+    .faq-icon {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--cipher);
+      flex-shrink: 0;
+      transition: transform 0.3s;
+      letter-spacing: 0;
+    }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+    .faq-ans { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+    .faq-ans-inner {
+      font-size: 0.85rem;
+      line-height: 1.9;
+      color: var(--muted);
+      padding-bottom: 1.4rem;
+      font-weight: 300;
+    }
+
+    /* ── CONTACT ── */
+    #contact { background: var(--surface); border-top: 1px solid var(--border); }
+    .contact-layout { display: grid; grid-template-columns: 1fr 1.2fr; gap: 6rem; align-items: start; }
+    .contact-meta {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      line-height: 2.2;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+    .contact-meta span { color: var(--cipher); }
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+    .form-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .form-input, .form-textarea {
+      background: var(--black);
+      border: 1px solid var(--border);
+      color: var(--off-white);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.82rem;
+      padding: 0.85rem 1rem;
+      outline: none;
+      letter-spacing: 0.04em;
+      transition: border-color 0.2s;
+      resize: none;
+    }
+    .form-input::placeholder, .form-textarea::placeholder { color: var(--muted); }
+    .form-input:focus, .form-textarea:focus { border-color: var(--cipher); }
+    .form-textarea { min-height: 110px; }
+    .btn-submit {
+      align-self: flex-start;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--black);
+      background: var(--off-white);
+      border: none;
+      padding: 0.9rem 2rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-submit:hover { background: var(--cipher); transform: translateY(-1px); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--black);
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 3rem;
+    }
+    .footer-top {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+    }
+    .footer-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 0.22em;
+      color: var(--mid);
+    }
+    .footer-cipher {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--cipher);
+      letter-spacing: 0.1em;
+      opacity: 0.5;
+    }
+    .footer-links { display: flex; gap: 2rem; }
+    .footer-links a {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--cipher); }
+    .footer-bottom {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .footer-note {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.55rem; color: var(--muted); letter-spacing: 0.1em;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeDown { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:none; } }
+    @keyframes fadeUp   { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:none; } }
+    @keyframes marquee  { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+    @keyframes blink    { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    .cursor-blink { animation: blink 1s step-end infinite; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 860px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      section { padding: 4rem 1.5rem; }
+      .hero { padding: 5rem 1.5rem 3rem; }
+      .manifesto-grid, .community-layout, .faq-layout,
+      .contact-layout, .records-header, .archive-header { grid-template-columns: 1fr; gap: 2.5rem; }
+      .manifesto-right { border-left: none; padding-left: 0; border-top: 1px solid var(--border); padding-top: 2rem; }
+      .records-grid { grid-template-columns: 1fr; }
+      footer { padding: 2rem 1.5rem; }
+      .footer-top, .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">
+      Nostalgic Threads
+      <span>⩃▣﹌⫲⊏⌊◐̸❘◡ / ⫲⫶⩒ⴹ⊏⏣﹌</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#manifesto">Manifesto</a></li>
+      <li><a href="#archive">Archive</a></li>
+      <li><a href="#records">Records</a></li>
+      <li><a href="#community">Community</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="#archive" class="nav-access">Request Access</a>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-bg-cipher" id="heroBgCipher"></div>
+
+    <div class="hero-timestamp">
+      <span class="live">●</span> &nbsp;
+      ARCHIVE ACTIVE — <span id="liveTime"></span> &nbsp;/&nbsp; CH-III-26 &nbsp;/&nbsp; GTB
+    </div>
+
+    <h1 class="hero-title">
+      <span class="real-text">NOSTALGIC<br>THREADS</span>
+      <span class="cipher-overlay">⩃▣﹌⫲⊏⌊◐̸❘◡<br>⫲⫶⩒ⴹ⊏⏣﹌</span>
+    </h1>
+
+    <div class="hero-bottom">
+      <p class="hero-desc">
+        A <em>living archive</em> of the streets.<br>
+        We preserve what history forgot — softness, memory, survival.<br>
+        If you're here, you <em>belong</em>.
+      </p>
+      <div class="hero-actions">
+        <a href="#archive" class="btn-primary">Enter the Archive</a>
+        <div class="hero-code">
+          SEAL: S-I / OPEN ARCHIVE<br>
+          QUALITY: Q1-S — Q3-S<br>
+          ALL RECORDS UNDER R950
+        </div>
+      </div>
+    </div>
+    <div class="hero-divider"></div>
+  </div>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span class="marquee-item">Archive of the Streets</span>
+      <span class="marquee-item cipher-mode">⊏⩒◡⫶❘⩗ⴹ / ▣⫬ / ⫲⫶ⴹ / ﹌⫲⩒ⴹⴹ⫲﹌</span>
+      <span class="marquee-item">Free Returns · 30 Days</span>
+      <span class="marquee-item">All Records Under R950</span>
+      <span class="marquee-item cipher-mode">⩃▣ / ⩒◡﹌⫶ · ⩃▣ / ⏊ⴹ⩒⫬▣⩒⩁</span>
+      <span class="marquee-item">Preservation Over Performance</span>
+      <span class="marquee-item">Ships in 2–4 Days</span>
+      <span class="marquee-item">CH-III-26 Now Open</span>
+      <span class="marquee-item">Archive of the Streets</span>
+      <span class="marquee-item cipher-mode">⊏⩒◡⫶❘⩗ⴹ / ▣⫬ / ⫲⫶ⴹ / ﹌⫲⩒ⴹⴹ⫲﹌</span>
+      <span class="marquee-item">Free Returns · 30 Days</span>
+      <span class="marquee-item">All Records Under R950</span>
+      <span class="marquee-item cipher-mode">⩃▣ / ⩒◡﹌⫶ · ⩃▣ / ⏊ⴹ⩒⫬▣⩒⩁</span>
+      <span class="marquee-item">Preservation Over Performance</span>
+      <span class="marquee-item">Ships in 2–4 Days</span>
+      <span class="marquee-item">CH-III-26 Now Open</span>
+    </div>
+  </div>
+
+  <!-- MANIFESTO -->
+  <section id="manifesto">
+    <div class="manifesto-grid">
+      <div class="manifesto-left">
+        <p class="mono-tag">Brand Manifesto</p>
+        <div class="manifesto-quote">
+          THE ARCHIVE<br>
+          NEVER<br>
+          <em>BEGS.</em>
+        </div>
+        <p class="manifesto-body">
+          Nostalgic Threads is not a fashion brand.<br>
+          It is a living archive.<br><br>
+          We exist to preserve what the streets never forgot —
+          youth, softness, chaos, love, survival, memory.<br><br>
+          Trends expire. Archives grow.<br>
+          People don't wear Nostalgic Threads to flex.<br>
+          They wear it to feel <em style="color:var(--cipher);font-style:normal">understood</em>.
+        </p>
+      </div>
+      <div class="manifesto-right">
+        <div class="pillar">
+          <p class="pillar-num">01 //</p>
+          <p class="pillar-title">Preservation Over Performance</p>
+          <p class="pillar-desc">We document moments instead of chasing attention. No forced virality. No loud marketing. If it's real, it lasts.</p>
+        </div>
+        <div class="pillar">
+          <p class="pillar-num">02 //</p>
+          <p class="pillar-title">Softness as Resistance</p>
+          <p class="pillar-desc">Softness survived the streets. That makes it powerful.</p>
+        </div>
+        <div class="pillar">
+          <p class="pillar-num">03 //</p>
+          <p class="pillar-title">Time Over Trends</p>
+          <p class="pillar-desc">Trends expire. Archives grow. Everything we make is built to outlast the moment it was born in.</p>
+        </div>
+        <div class="pillar">
+          <p class="pillar-num">04 //</p>
+          <p class="pillar-title">People Are the Product</p>
+          <p class="pillar-desc">Clothes are vessels. People are the record. You are what the archive is made of.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ARCHIVE / PRICING -->
+  <section id="archive">
+    <div class="archive-header">
+      <div>
+        <p class="mono-tag">Current Chapter</p>
+        <h2 class="section-title">THE ARCHIVE</h2>
+        <p class="section-sub">Open records, available now. Every piece carries a code — an identity, a time, a seal.</p>
+      </div>
+      <div class="archive-legend">
+        S-I &nbsp;→&nbsp; <span>Open Archive</span> &nbsp;· Reprintable<br>
+        S-II &nbsp;→&nbsp; <span>Restricted</span> &nbsp;· Limited, may return<br>
+        S-III &nbsp;→&nbsp; <span>Sealed</span> &nbsp;· Never reproduced<br>
+        Q1-S &nbsp;→&nbsp; <span>Everyday Soft</span> &nbsp;· Q3-S → Heirloom Soft
+      </div>
+    </div>
+    <table class="archive-table">
+      <thead>
+        <tr>
+          <th>Record</th>
+          <th>Archive Code</th>
+          <th>Seal</th>
+          <th>Price</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <span class="record-name">Vintage Tee</span>
+            <span class="record-cipher">⩗❘⩃⫲⊏◐̸ⴹ / ⫲ⴹⴹ</span>
+          </td>
+          <td class="record-code">
+            T•26.03.11 / D-09:00<br>
+            CH-III-26 · Q1-S · F-S-2<br>
+            <span class="highlight">GTB</span>
+          </td>
+          <td><span class="seal-badge s1">S-I</span></td>
+          <td class="record-price">R350–530</td>
+          <td><a href="#contact" class="record-access">Access →</a></td>
+        </tr>
+        <tr>
+          <td>
+            <span class="record-name">Classic Crewneck</span>
+            <span class="record-cipher">◡⌊⊏﹌﹌❘◡ / ◡⩒ⴹ⩘⩘⩃ⴹ◡⫻</span>
+          </td>
+          <td class="record-code">
+            T•26.03.11 / T-19:30<br>
+            CH-III-26 · Q2-S · F-S-4<br>
+            <span class="highlight">BESTSELLER</span>
+          </td>
+          <td><span class="seal-badge s2">S-II</span></td>
+          <td class="record-price">R700–870</td>
+          <td><a href="#contact" class="record-access">Access →</a></td>
+        </tr>
+        <tr>
+          <td>
+            <span class="record-name">Easy Trousers</span>
+            <span class="record-cipher">ⴹ⊏﹌⩚ / ⫲⩒▣◡﹌ⴹ⩒﹌</span>
+          </td>
+          <td class="record-code">
+            T•26.03.11 / D-10:00<br>
+            CH-III-26 · Q1-S · F-A-3<br>
+            <span class="highlight">GTB</span>
+          </td>
+          <td><span class="seal-badge s1">S-I</span></td>
+          <td class="record-price">R600–830</td>
+          <td><a href="#contact" class="record-access">Access →</a></td>
+        </tr>
+        <tr>
+          <td>
+            <span class="record-name">Open Cardigan</span>
+            <span class="record-cipher">▣⏊ⴹ⩃ / ◡⊏⩒⏣❘◐̸⊏⩃</span>
+          </td>
+          <td class="record-code">
+            T•26.02.14 / N-23:00<br>
+            CH-II-26 · Q3-S · F-S-5<br>
+            <span class="highlight">RESTRICTED</span>
+          </td>
+          <td><span class="seal-badge s3">S-III</span></td>
+          <td class="record-price">R790–920</td>
+          <td><a href="#contact" class="record-access">Access →</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- TESTIMONIALS / RECORDS -->
+  <section id="records">
+    <div class="records-header">
+      <div>
+        <p class="mono-tag">Field Records</p>
+        <h2 class="section-title">WORN &<br>ARCHIVED</h2>
+      </div>
+      <p class="section-sub">People don't review Nostalgic Threads. They record what it felt like. These are their words, unedited and kept.</p>
+    </div>
+    <div class="records-grid">
+      <div class="record-card">
+        <div class="record-meta">
+          <span>REC-001 / CH-I-26</span>
+          <span class="verified">✦ VERIFIED</span>
+        </div>
+        <p class="record-text">"I didn't expect this quality at this price point. The crewneck feels like something you'd find at a vintage market — but brand new. It's the kind of piece that already feels like a memory."</p>
+        <p class="record-author"><span class="name">Amara K.</span> &nbsp;·&nbsp; Johannesburg</p>
+      </div>
+      <div class="record-card">
+        <div class="record-meta">
+          <span>REC-002 / CH-I-26</span>
+          <span class="verified">✦ VERIFIED</span>
+        </div>
+        <p class="record-text">"Everything I've ordered has a softness to it that just feels right. My friends always ask where I got my basics from. I don't explain — I just point them here."</p>
+        <p class="record-author"><span class="name">Liam T.</span> &nbsp;·&nbsp; London</p>
+      </div>
+      <div class="record-card">
+        <div class="record-meta">
+          <span>REC-003 / CH-II-26</span>
+          <span class="verified">✦ VERIFIED</span>
+        </div>
+        <p class="record-text">"Ordered three tees and a cardigan. Everything arrived like it meant something. The return process was effortless too — but I didn't return anything. Couldn't bring myself to."</p>
+        <p class="record-author"><span class="name">Priya S.</span> &nbsp;·&nbsp; Toronto</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMMUNITY CODE -->
+  <section id="community">
+    <div class="community-layout">
+      <div>
+        <p class="mono-tag">Community Code</p>
+        <h2 class="section-title">HOW<br>WE MOVE</h2>
+        <p class="section-sub">Belonging is not earned through money or hype. It is earned through recognition.</p>
+        <div class="code-list">
+          <div class="code-item"><span class="code-num">01</span><span class="code-text">If you're here, you belong</span></div>
+          <div class="code-item"><span class="code-num">02</span><span class="code-text">We preserve, not perform</span></div>
+          <div class="code-item"><span class="code-num">03</span><span class="code-text">Respect the record</span></div>
+          <div class="code-item"><span class="code-num">04</span><span class="code-text">The streets taught us, they didn't define us</span></div>
+          <div class="code-item"><span class="code-num">05</span><span class="code-text">No rush, no pressure</span></div>
+          <div class="code-item"><span class="code-num">06</span><span class="code-text">Stories are handled with care</span></div>
+          <div class="code-item"><span class="code-num">07</span><span class="code-text">We document moments, not hype</span></div>
+          <div class="code-item"><span class="code-num">08</span><span class="code-text">Protect the softness</span></div>
+          <div class="code-item"><span class="code-num">09</span><span class="code-text">Community over clout</span></div>
+          <div class="code-item"><span class="code-num">10</span><span class="code-text">Leave something worth remembering</span></div>
+        </div>
+      </div>
+
+      <div>
+        <p class="mono-tag">Cipher Decoder</p>
+        <p class="section-sub" style="margin-bottom:2rem">The archive has its own language. Type any text to encode it — or paste a cipher to feel it.</p>
+        <div class="cipher-decoder">
+          <div class="decoder-title">Archive Cipher · v1</div>
+          <label class="decoder-label">Input Text</label>
+          <div class="decoder-input-wrap">
+            <input class="decoder-input" id="cipherInput" type="text" placeholder="Type anything..." maxlength="60" />
+          </div>
+          <label class="decoder-label">Encoded Output</label>
+          <div class="decoder-output" id="cipherOutput"><span class="cursor-blink">_</span></div>
+          <p class="decoder-hint">
+            // Cipher used on all product codes, time stamps, and archive easter eggs.<br>
+            // Each glyph is a letter. Each letter has a record.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="faq-layout">
+      <div>
+        <p class="mono-tag">Questions</p>
+        <h2 class="section-title">WHAT<br>YOU NEED<br>TO KNOW</h2>
+        <p class="section-sub">Still unsure? Send a message below. We respond within 24 hours.</p>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item open">
+          <button class="faq-q" onclick="toggleFaq(this)">How long does shipping take? <span class="faq-icon">+</span></button>
+          <div class="faq-ans" style="max-height:200px">
+            <p class="faq-ans-inner">Records ship within 1–2 business days. Standard delivery runs 2–4 days domestically. International access typically arrives in 7–14 days depending on your location.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">What is your return policy? <span class="faq-icon">+</span></button>
+          <div class="faq-ans">
+            <p class="faq-ans-inner">Free returns within 30 days of access. Items must be unworn, in original condition. Use our prepaid return label — no explanation needed. The archive holds no grudges.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">What do the seal codes mean? <span class="faq-icon">+</span></button>
+          <div class="faq-ans">
+            <p class="faq-ans-inner">S-I: Open Archive — available and reprintable. S-II: Restricted — limited, may return. S-III: Sealed — never reproduced. S-IV: Lost Record — destroyed, never shown again. Once a seal is closed, it doesn't open.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">How do I find my size? <span class="faq-icon">+</span></button>
+          <div class="faq-ans">
+            <p class="faq-ans-inner">Every record includes a size guide with measurements in cm and inches. Our fit runs relaxed by default — if between sizes, size down for a closer fit. Fit codes are listed on each product (F-S = Soft fit, F-C = Classic).</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">What does GTB mean? <span class="faq-icon">+</span></button>
+          <div class="faq-ans">
+            <p class="faq-ans-inner">GTB — Going To Be. It marks archived material that is pending full access or will be entering the archive soon. Watch for it. When it lands, it lands quietly.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact-layout">
+      <div>
+        <p class="mono-tag">Open Channel</p>
+        <h2 class="section-title">SEND A<br>MESSAGE</h2>
+        <p class="section-sub">We read every message. We reply within 24 hours. No bots, no scripts — just the people behind the archive.</p>
+        <div class="contact-meta">
+          CHANNEL: OPEN<br>
+          RESPONSE TIME: <span>&lt; 24HR</span><br>
+          CHAPTER: <span>CH-III-26</span><br>
+          STATUS: <span>ARCHIVING</span>
+        </div>
+      </div>
+      <div class="contact-form">
+        <form action="https://formspree.io/f/xbdzgenk" method="POST" style="display:contents">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <input class="form-input" type="text" name="first_name" placeholder="e.g. Jamie" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input class="form-input" type="text" name="last_name" placeholder="e.g. Osei" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input class="form-input" type="email" name="email" placeholder="you@example.com" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Your Record</label>
+          <textarea class="form-textarea" name="message" placeholder="What do you want the archive to hear?"></textarea>
+        </div>
+        <button type="submit" class="btn-submit">Transmit Message</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-logo">Nostalgic Threads</div>
+      <div class="footer-cipher">⩃▣﹌⫲⊏⌊◐̸❘◡ / ⫲⫶⩒ⴹ⊏⏣﹌</div>
+      <div class="footer-links">
+        <a href="#">Instagram</a>
+        <a href="#">TikTok</a>
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-note">© 2026 Nostalgic Threads. Archive of the Streets.</p>
+      <p class="footer-note">CH-III-26 · The archive never begs. The archive never rushes. The archive keeps what mattered.</p>
+    </div>
+  </footer>
+
+  <script>
+    // ── CIPHER MAP ──
+    const glyphMap = {
+      'A':'⊏⏎','B':'⎍_','C':'◡','D':'⏣','E':'ⴹ','F':'⫬','G':'◐̸','H':'⫶','I':'❘',
+      'J':'⤵','K':'⫻','L':'⌊','M':'⩁','N':'⩃','O':'▣','P':'⏊','Q':'◩','R':'⩒',
+      'S':'﹌','T':'⫲','U':'◡','V':'⩗','W':'⩘⩘','X':'⤫','Y':'⩚','Z':'⩛',
+      '0':'◯','1':'∣','2':'⨀','3':'⫰','4':'⯃','5':'⨐','6':'◑','7':'⫽','8':'▣▣','9':'◔',
+      ' ':' ','/':'/','.':'·','-':'-',':':':'
+    };
+    function encode(text) {
+      return text.toUpperCase().split('').map(c => glyphMap[c] || c).join('');
+    }
+
+    // ── DECODER UI ──
+    const cipherInput = document.getElementById('cipherInput');
+    const cipherOutput = document.getElementById('cipherOutput');
+    cipherInput.addEventListener('input', () => {
+      const val = cipherInput.value;
+      if (!val) { cipherOutput.innerHTML = '<span class="cursor-blink">_</span>'; return; }
+      cipherOutput.textContent = encode(val);
+    });
+
+    // ── LIVE TIMESTAMP ──
+    function updateTime() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2,'0');
+      const m = String(now.getMinutes()).padStart(2,'0');
+      const s = String(now.getSeconds()).padStart(2,'0');
+      const hNum = now.getHours();
+      let cls = hNum >= 6 && hNum < 18 ? 'D' : hNum >= 18 && hNum < 22 ? 'T' : hNum >= 22 || hNum < 3 ? 'N' : 'L';
+      const el = document.getElementById('liveTime');
+      if (el) el.textContent = `T•26.03.11 / ${cls}-${h}:${m}:${s}`;
+    }
+    updateTime(); setInterval(updateTime, 1000);
+
+    // ── HERO BG CIPHER ──
+    const bgEl = document.getElementById('heroBgCipher');
+    const bgChars = Object.values(glyphMap).join('') + '⊏⏎⎍_◡⏣ⴹ⫬◐̸⫶❘⤵⫻⌊⩁⩃▣⏊◩⩒﹌⫲◡⩗⩘⩘⤫⩚⩛◯∣⨀⫰⯃⨐◑⫽▣▣◔';
+    let bgText = '';
+    for(let i=0; i<600; i++) bgText += bgChars[Math.floor(Math.random()*bgChars.length)] + ' ';
+    bgEl.textContent = bgText;
+
+    // ── FAQ TOGGLE ──
+    function toggleFaq(btn) {
+      const item = btn.closest('.faq-item');
+      const ans = item.querySelector('.faq-ans');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => {
+        i.classList.remove('open');
+        i.querySelector('.faq-ans').style.maxHeight = '0';
+      });
+      if (!isOpen) {
+        item.classList.add('open');
+        ans.style.maxHeight = ans.scrollHeight + 'px';
+      }
+    }
+
+    // ── SCROLL REVEAL ──
+    const revealObserver = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.12 });
+    document.querySelectorAll(
+      '.pillar, .record-card, .archive-table tbody tr, .code-item'
+    ).forEach(el => revealObserver.observe(el));
+  </script>
+</body>
+</html>
